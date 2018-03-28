@@ -1,0 +1,16 @@
+C:\Users\Dzana\source\repos\Lab4\Lab4\bin\Debug\netcoreapp2.0\Lab4.deps.json
+C:\Users\Dzana\source\repos\Lab4\Lab4\bin\Debug\netcoreapp2.0\Lab4.runtimeconfig.json
+C:\Users\Dzana\source\repos\Lab4\Lab4\bin\Debug\netcoreapp2.0\Lab4.runtimeconfig.dev.json
+C:\Users\Dzana\source\repos\Lab4\Lab4\bin\Debug\netcoreapp2.0\Lab4.dll
+C:\Users\Dzana\source\repos\Lab4\Lab4\bin\Debug\netcoreapp2.0\Lab4.pdb
+C:\Users\Dzana\source\repos\Lab4\Lab4\obj\Debug\netcoreapp2.0\Lab4.fsprojResolveAssemblyReference.cache
+C:\Users\Dzana\source\repos\Lab4\Lab4\obj\Debug\netcoreapp2.0\Lab4.dll
+C:\Users\Dzana\source\repos\Lab4\Lab4\obj\Debug\netcoreapp2.0\Lab4.pdb
+C:\Users\Dzana\Desktop\Lab4\Lab4\bin\Debug\netcoreapp2.0\Lab4.deps.json
+C:\Users\Dzana\Desktop\Lab4\Lab4\bin\Debug\netcoreapp2.0\Lab4.runtimeconfig.json
+C:\Users\Dzana\Desktop\Lab4\Lab4\bin\Debug\netcoreapp2.0\Lab4.runtimeconfig.dev.json
+C:\Users\Dzana\Desktop\Lab4\Lab4\bin\Debug\netcoreapp2.0\Lab4.dll
+C:\Users\Dzana\Desktop\Lab4\Lab4\bin\Debug\netcoreapp2.0\Lab4.pdb
+C:\Users\Dzana\Desktop\Lab4\Lab4\obj\Debug\netcoreapp2.0\Lab4.fsprojResolveAssemblyReference.cache
+C:\Users\Dzana\Desktop\Lab4\Lab4\obj\Debug\netcoreapp2.0\Lab4.dll
+C:\Users\Dzana\Desktop\Lab4\Lab4\obj\Debug\netcoreapp2.0\Lab4.pdb

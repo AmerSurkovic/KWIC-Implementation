@@ -1,0 +1,118 @@
+model atm
+package Specification1    
+    
+    context ATM
+        -- state: the current state of the ATM, initial value is WaitingForCard
+        def: let state : ATMState = ATMState::WaitingForCard
+            
+        -- accounts: the set of accounts managed by the ATM
+        def: let accounts : Set(ATMAccount)
+            
+        -- currentAccount: the account of the current user
+        def: let currentAccount : ATMAccount
+
+        -- invariant: the card numbers of the accounts are unique
+        inv: accounts->forAll(x, y | x <> y implies x.CardNo <> y.CardNo)
+
+		-- accountExists: returns true if accounts includes an account with the given card number
+        def: let accountExists(CardNo : Integer) : Boolean = accounts->exists(x | x.CardNo = CardNo)
+            
+        -- selectAccount: returns an account with the given card number if it exists
+        def: let selectAccount(CardNo : Integer) : ATMAccount = accounts->any(x | x.CardNo = CardNo) 
+            
+	-- ATM::InsertCard: a user has inserted a card with the given card number
+    context ATM::InsertCard(CardNo : Integer)
+        pre: state = ATMState::WaitingForCard and accountExists(CardNo)
+	        -- State was WaitingForCard and the card number corresponds to an existing account
+        post: currentAccount = selectAccount(CardNo) and state = ATMState::WaitingForPIN
+    	    -- Select the user's account and wait for the user to enter PIN 
+
+    context ATM::InsertCard(CardNo : Integer)
+        pre: state = ATMState::WaitingForCard and not accountExists(CardNo) 
+        	-- State was WaitingForCard and the card number does NOT correspond to an existing account
+        post: state = ATMState::WaitingForCardRemoval
+	        -- Eject the card and wait for the user to remove it
+	-- End of ATM::InsertCard
+                       
+	-- ATM::EnterPIN: the user has entered the given PIN
+    context ATM::EnterPIN(PIN : Integer)
+        pre: state = ATMState::WaitingForPIN and PIN = currentAccount.PIN
+    	    -- State was WaitingForPIN and the entered PIN is correct
+	    post: currentAccount.WrongPINs = 0 and state = ATMState::WaitingForCommand        
+	        -- Reset the Wrong PINs counter and wait for a user command
+
+    context ATM::EnterPIN(PIN : Integer)
+        pre: state = ATMState::WaitingForPIN and PIN <> currentAccount.PIN and currentAccount.WrongPINs < 2
+        	-- State was WaitingForPIN, the entered PIN is incorrect, and the counter was less than 2
+        post: currentAccount.WrongPINs = currentAccount.WrongPINs@pre + 1
+        	-- Increase the counter and wait for the user to enter a new PIN 
+            
+    context ATM::EnterPIN(PIN : Integer)
+        pre: state = ATMState::WaitingForPIN and PIN <> currentAccount.PIN and currentAccount.WrongPINs >= 2
+        	-- State was WaitingForPIN, the entered PIN is incorrect, and the counter was >= 2
+        post: accounts = accounts@pre->excluding(currentAccount) and state = ATMState::WaitingForCard
+    	    -- The user has entered the wrong PIN three times. Remove the account and wait for a user to insert a new card
+    -- End of ATM:EnterPIN
+            
+	-- ATM::ChangePIN: the user has selected to change to the given PIN       
+	context ATM::ChangePIN(PIN : Integer)
+	    pre: state = ATMState::WaitingForCommand
+	    	-- State was WaitingForCommand
+	    post: currentAccount.PIN = PIN and state = ATMState::WaitingForCardRemoval
+	        -- Update the PIN in the ATMAccount object, eject the card and wait for the user to remove it
+    -- End of ATM::ChangePIN
+    
+    -- ATM::Cancel: the user has pressed cancel
+    context ATM::Cancel()        
+        pre: state = ATMState::WaitingForCommand or state = ATMState::WaitingForPIN
+            -- State was WaitingForCommand or WaitingForPIN
+        post: state = ATMState::WaitingForCardRemoval
+            -- Eject the cart and wait for the user to take it
+            -- If CurrentAccount.WrongPINs > 0 it will not be reset
+    -- End of ATM::Cancel
+                
+	-- ATM::Withdraw: the user has selected to withdraw the given amount       
+	-- TODO: write specification for ATM::Withdraw
+	context ATM::Withdraw(Amount : Real)
+	    pre: state = ATMState::WaitingForCommand and Amount < currentAccount.Balance and Amount > 0
+	        -- State was waiting for the command and valid amount is entered
+	    post: currentAccount.Balance = currentAccount.Balance@pre - Amount and state = ATMState::WaitingForCashRemoval
+	        -- Remove the inserted amount from account balance and remove cash from the ATM
+	        
+	context ATM::Withdraw(Amount : Real)
+		pre: state = ATMState::WaitingForCommand and Amount > currentAccount.Balance or Amount < 0
+		    -- State was waiting for the command and invalid amount was entered
+		post: state = ATMState::WaitingForCommand
+		    -- Message about invalid amount input (greater than account balance)
+		    -- is printed to the user and the ATM is back in the state waiting for a command
+	-- End of ATM::Withdraw       
+            
+	-- ATM::RemoveCard: the user has removed the ejected card
+	-- TODO: write specification for ATM::RemoveCard
+	context ATM::RemoveCard()
+	    pre: state = ATMState::WaitingForCardRemoval
+	        -- State of the machine was that it was expecting card removal
+	    post: state = ATMState::WaitingForCard
+	        -- Card is ejected to the user.
+	        -- New card is waiting to be inserted.
+	        
+	context ATM::RemoveCard()
+	    pre: state = ATMState::WaitingForCardAndCashRemoval
+	        -- Both cash and card need to be dispensed.
+	        -- Card is ejected first after which ATM is in the state where it is waiting for cash removal
+	    post: state = ATMState::WaitingForCashRemoval
+	        -- ATM now waits for cash removal
+	-- End of ATM::RemoveCard
+            
+	-- ATM::RemoveCash: the user removes the dispensed cash
+	-- TODO: write specification for ATM::RemoveCash
+	context ATM::RemoveCash()
+	    pre: state = ATMState::WaitingForCashRemoval
+	        -- State of the machine was that it was expecting cash removal
+	    post: state = ATMState::WaitingForCard
+	        -- Cash is dispensed and card is ejected to the user
+	        -- New card is waiting to be inserted.
+	-- End of ATM::RemoveCash
+                         
+endpackage
+endmodel
